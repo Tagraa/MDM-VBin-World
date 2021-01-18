@@ -1,4 +1,4 @@
-## Welcome to MDM
+## Welcome to the MDM
 # Virtual Binary World (VBin World)
 ## _An I.T. based World for Artificial Intelligence and Humanity._
 ---
