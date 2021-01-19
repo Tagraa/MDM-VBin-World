@@ -4,3 +4,4 @@
 ---
 ### Pure Assembly Code ... Pure Raw Binary ...
 #### Require NASM Compiler and QEMU Emulator for 'Build.sh' bash script to run properly and result: '/VBin/Disk.img' file, a tiny little I.T. based binary World, currently in alpha stage.
+### For more information - [VBin World Wiki](https://github.com/Tagraa/MDM-VBin-World/wiki)
