@@ -150,6 +150,19 @@ Display.Decimal.Byte:
         pop     cx
         pop     ax
         ret
+    .Result:
+        push    ax
+        push    dx
+        xor     dx, dx
+        mov     dl, byte [Decimal.Byte]
+        xor     ax, ax
+        mov     al, [__result__]
+        mov     byte [Decimal.Byte], al
+        call    Display.Decimal.Byte
+        mov     byte [Decimal.Byte], dl
+        pop     dx
+        pop     ax
+        ret
 ;-----------------------------------------------------------------------
 ; Display Decimal Byte Value to Octal
 ;-----------------------------------------------------------------------
@@ -259,6 +272,17 @@ Display.Decimal.Word:
         pop     cx
         pop     ax
         ret
+    .Result:
+        push    ax
+        push    dx
+        mov     dx, Word [Decimal.Word]
+        mov     ax, [__result__]
+        mov     word [Decimal.Word], ax
+        call    Display.Decimal.Word
+        mov     Word [Decimal.Word], dx
+        pop     dx
+        pop     ax
+        ret
 ;-----------------------------------------------------------------------
 ; Display Decimal Word Value to Octal
 ;-----------------------------------------------------------------------
@@ -300,7 +324,7 @@ Decimal.Byte.Plus:     db  0
         xor     ax, ax
         mov     al, byte [Decimal.Byte]
         add     al, byte [Decimal.Byte.Plus]
-        mov     byte [Decimal.Byte], al
+        mov     [__result__], al
         pop     ax
         ret
 ;-----------------------------------------------------------------------
@@ -313,7 +337,7 @@ Decimal.Word.Plus:     dw  0
         xor     ax, ax
         mov     ax, word [Decimal.Word]
         add     ax, word [Decimal.Word.Plus]
-        mov     word [Decimal.Word], ax
+        mov     [__result__], ax
         pop     ax
         ret
 ;=======================================================================
@@ -329,7 +353,7 @@ Decimal.Byte.Minus:     db  0
         xor     ax, ax
         mov     al, byte [Decimal.Byte]
         sub     al, byte [Decimal.Byte.Minus]
-        mov     byte [Decimal.Byte], al
+        mov     [__result__], al
         pop     ax
         ret
 ;-----------------------------------------------------------------------
@@ -342,7 +366,7 @@ Decimal.Word.Minus:     dw  0
         xor     ax, ax
         mov     ax, word [Decimal.Word]
         sub     ax, word [Decimal.Word.Minus]
-        mov     word [Decimal.Word], ax
+        mov     [__result__], ax
         pop     ax
         ret
 ;=======================================================================
@@ -358,7 +382,7 @@ Decimal.Byte.Multiply:     db  0
         xor     ax, ax
         mov     al, byte [Decimal.Byte]
         mul     byte [Decimal.Byte.Multiply]
-        mov     word [Display.Decimal.Byte.Special.Result], ax
+        mov     [__result__], ax
         pop     ax
         ret
 ;-----------------------------------------------------------------------
@@ -373,8 +397,8 @@ Decimal.Word.Multiply:     dw  0
         xor     dx, dx
         mov     ax, word [Decimal.Word]
         mul     word [Decimal.Word.Multiply]
-        mov     [Display.Decimal.Word.Special.Result], ax
-        mov     [Display.Decimal.Word.Special.Result+2], dx
+        mov     [__result__], ax
+        mov     [__result__+2], dx
         pop     dx
         pop     ax
         ret
@@ -391,7 +415,7 @@ Decimal.Byte.Divide:     db  0
         xor     ax, ax
         mov     al, byte [Decimal.Byte]
         div     byte [Decimal.Byte.Divide]
-        mov     word [Display.Decimal.Byte.Special.Result], ax
+        mov     [__result__], ax
         pop     ax
         ret
 ;-----------------------------------------------------------------------
@@ -405,8 +429,8 @@ Decimal.Word.Divide:     dw  0
         xor     dx, dx
         mov     ax, word [Decimal.Word]
         div     word [Decimal.Word.Divide]
-        mov     [Display.Decimal.Word.Special.Result], ax
-        mov     [Display.Decimal.Word.Special.Result+2], dx
+        mov     [__result__], ax
+        mov     [__result__+2], dx
         pop     dx
         pop     ax
         ret
@@ -414,10 +438,10 @@ Decimal.Word.Divide:     dw  0
 ; Display Multiplication or Division result between byte sized decimal
 ; values, depends on type of operation
 ;=======================================================================
-Display.Decimal.Byte.Special:
+Display.Decimal.Byte.Result.Special:
     push    word [Decimal.Word]
     push    ax
-    mov     ax, word [Display.Decimal.Byte.Special.Result]
+    mov     ax, word [__result__]
     cmp     byte [.Zone], 0
     ja      .Division
     mov     word [Decimal.Word], ax
@@ -426,12 +450,11 @@ Display.Decimal.Byte.Special:
         pop     ax
         pop     word [Decimal.Word]
         ret
-    .Result:    dw  0
     .Zone:      db  0
         ret
     .Quotient:
         mov     byte [.Zone], 1
-        jmp     Display.Decimal.Byte.Special
+        jmp     Display.Decimal.Byte.Result.Special
     .Division:
         push    dx
         xor     dx, dx
@@ -449,12 +472,12 @@ Display.Decimal.Byte.Special:
         jmp     .Done
     .Remainder:
         mov     byte [.Zone], 2
-        jmp     Display.Decimal.Byte.Special
+        jmp     Display.Decimal.Byte.Result.Special
 ;=======================================================================
 ; Display Multiplication or Division result between word sized decimal
 ; values, depends on type of operation
 ;=======================================================================
-Display.Decimal.Word.Special:
+Display.Decimal.Word.Result.Special:
     push    word [Decimal.Word]
     push    ax
     push    dx
@@ -463,11 +486,11 @@ Display.Decimal.Word.Special:
     cmp     byte [.Zone], 2
     je      .Remainder_Part
     .Quotient_Part:
-        mov     ax, [.Result]
+        mov     ax, [__result__]
         mov     word [Decimal.Word], ax
         jmp     .Done
     .Remainder_Part:
-        mov     dx, [.Result+2]
+        mov     dx, [__result__+2]
         mov     word [Decimal.Word], dx
     .Done:
         call    Display.Decimal.Word
@@ -475,31 +498,16 @@ Display.Decimal.Word.Special:
         pop     ax
         pop     word [Decimal.Word]
         ret
-    .Result:    dd  0
     .Zone:      db  0
         ret
     .Quotient:
         mov     byte [.Zone], 1
-        jmp     Display.Decimal.Word.Special
+        jmp     Display.Decimal.Word.Result.Special
     .Remainder:
         mov     byte [.Zone], 2
-        jmp     Display.Decimal.Word.Special
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        jmp     Display.Decimal.Word.Result.Special
 ;***********************************************************************
-; Application Programming Interface (API)
+; String Operations
 ;***********************************************************************
 ;=======================================================================
 ; Single character

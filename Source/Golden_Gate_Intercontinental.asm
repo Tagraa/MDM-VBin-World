@@ -24,10 +24,65 @@ Golden_Gateway:
     mov     byte [__current_column__], 1
     call    Display.Cursor.Position.Move
 ;.......................................................................
+    ;~ mov     byte [Decimal.Byte], 50
+    ;~ mov     byte [Decimal.Byte.Plus], 5
+    ;~ call    Decimal.Byte.Plus.Result
+    ;~ call    Display.Decimal.Byte.Result
+    ;
+    ;~ mov     word [Decimal.Word], 522
+    ;~ mov     word [Decimal.Word.Plus], 22
+    ;~ call    Decimal.Word.Plus.Result
+    ;~ call    Display.Decimal.Word.Result
+    ;
+    ;~ mov     byte [Decimal.Byte], 50
+    ;~ mov     byte [Decimal.Byte.Minus], 5
+    ;~ call    Decimal.Byte.Minus.Result
+    ;~ call    Display.Decimal.Byte.Result
+    ;
+    ;~ mov     word [Decimal.Word], 522
+    ;~ mov     word [Decimal.Word.Minus], 22
+    ;~ call    Decimal.Word.Minus.Result
+    ;~ call    Display.Decimal.Word.Result
+    ;
+    ;~ mov     byte [Decimal.Byte], 255
+    ;~ mov     byte [Decimal.Byte.Multiply], 255
+    ;~ call    Decimal.Byte.Multiply.Result
+    ;~ call    Display.Decimal.Byte.Result.Special
+    ;
     ;~ mov     word [Decimal.Word], 65535
     ;~ mov     word [Decimal.Word.Multiply], 65535
     ;~ call    Decimal.Word.Multiply.Result
-    ;~ call    Display.Decimal.Word.Special
+    ;~ call    Display.Decimal.Word.Result.Special
+    ;
+    ;~ mov     byte [Decimal.Byte], 255
+    ;~ mov     byte [Decimal.Byte.Divide], 25
+    ;~ call    Decimal.Byte.Divide.Result
+    ;~ call    Display.Decimal.Byte.Result.Special.Quotient
+    ;~ push    ax
+    ;~ xor     ax, ax
+    ;~ mov     al, ' '
+    ;~ call    Display.ASCII
+    ;~ mov     al, '&'
+    ;~ call    Display.ASCII
+    ;~ mov     al, ' '
+    ;~ call    Display.ASCII
+    ;~ pop     ax
+    ;~ call    Display.Decimal.Byte.Result.Special.Remainder
+    ;
+    mov     word [Decimal.Word], 65535
+    mov     word [Decimal.Word.Divide], 65000
+    call    Decimal.Word.Divide.Result
+    call    Display.Decimal.Word.Result.Special.Quotient
+    push    ax
+    xor     ax, ax
+    mov     al, ' '
+    call    Display.ASCII
+    mov     al, '&'
+    call    Display.ASCII
+    mov     al, ' '
+    call    Display.ASCII
+    pop     ax
+    call    Display.Decimal.Word.Result.Special.Remainder
 ;.......................................................................
 ;***********************************************************************
 LastPage:

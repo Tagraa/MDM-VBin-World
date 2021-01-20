@@ -1,7 +1,7 @@
 ;***********************************************************************
 ; Welcome to MDM
 ; Virtual Binary World (VBin World)
-; [ Version: 0.0.0.21-Alpha Stage ]
+; [ Version: 0.0.1.0-Alpha Stage ]
 ;***********************************************************************
 ;=======================================================================
 ; Text Logo
@@ -346,7 +346,9 @@ Text_Logo:
     call    Display.Color.Character.Write
     inc     byte [__current_column__]
     call    Display.Cursor.Position.Move
+;=======================================================================
 ;-----------------------------------------------------------------------
+;=======================================================================
     mov     byte [__ascii__], '0'
     call    Display.Color.Character.Write
     inc     byte [__current_column__]
@@ -367,7 +369,7 @@ Text_Logo:
     inc     byte [__current_column__]
     call    Display.Cursor.Position.Move
 ;-----------------------------------------------------------------------
-    mov     byte [__ascii__], '0'
+    mov     byte [__ascii__], '1'
     call    Display.Color.Character.Write
     inc     byte [__current_column__]
     call    Display.Cursor.Position.Move
@@ -377,16 +379,18 @@ Text_Logo:
     inc     byte [__current_column__]
     call    Display.Cursor.Position.Move
 ;-----------------------------------------------------------------------
-    mov     byte [__ascii__], '2'
+    mov     byte [__ascii__], '0'
     call    Display.Color.Character.Write
     inc     byte [__current_column__]
     call    Display.Cursor.Position.Move
 ;-----------------------------------------------------------------------
-    mov     byte [__ascii__], '8'
-    call    Display.Color.Character.Write
-    inc     byte [__current_column__]
-    call    Display.Cursor.Position.Move
+    ;~ mov     byte [__ascii__], '0'
+    ;~ call    Display.Color.Character.Write
+    ;~ inc     byte [__current_column__]
+    ;~ call    Display.Cursor.Position.Move
+;=======================================================================
 ;-----------------------------------------------------------------------
+;=======================================================================
     mov     byte [__ascii__], '-'
     call    Display.Color.Character.Write
     inc     byte [__current_column__]
