@@ -28,8 +28,10 @@ echo "$prompt Changing Directory."
 cd $SOURCE_DIR
 echo "$prompt Current Directory = $PWD"
 echo "$prompt Compilling Core..."
-nasm -f bin Golden_Gate_Intercontinental.asm -o "$OUTPUT_DIR/Golden_Gate_Intercontinental.vbin" -l "$OUTPUT_DIR/Golden_Gate_Intercontinental.lst"
-nasm -f bin Boot.asm -o "$OUTPUT_DIR/Disk.img" -l "$OUTPUT_DIR/Boot.lst"
+# nasm -f bin Collaborate.asm -o "$OUTPUT_DIR/Collaborate.vbin" -l "$OUTPUT_DIR/Collaborate.lst"
+nasm -f bin Mode_32.asm -o "$OUTPUT_DIR/Mode_32.vbin" -l "$OUTPUT_DIR/Mode_32.lst"
+nasm -f bin Boot.asm -o "$OUTPUT_DIR/Boot.vbin" -l "$OUTPUT_DIR/Boot.lst"
+nasm -f bin Disk.asm -o "$OUTPUT_DIR/Disk.img"
 echo "$prompt Returning to the Base Directory..."
 cd $BASE_DIR
 echo "$prompt Current Directory = $PWD"
