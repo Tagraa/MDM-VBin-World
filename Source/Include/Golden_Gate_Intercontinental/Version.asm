@@ -379,7 +379,7 @@ Text_Logo:
     inc     byte [__current_column__]
     call    Display.Cursor.Position.Move
 ;-----------------------------------------------------------------------
-    mov     byte [__ascii__], '0'
+    mov     byte [__ascii__], '8'
     call    Display.Color.Character.Write
     inc     byte [__current_column__]
     call    Display.Cursor.Position.Move

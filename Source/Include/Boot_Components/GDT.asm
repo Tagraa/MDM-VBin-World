@@ -28,7 +28,7 @@ GDT_End:
 GDT_Descriptor:
     dw  GDT_End - GDT_Start - 1
     dd  GDT_Start
-
+;-----------------------------------------------------------------------
 CODE_SEGMENT        equ     GDT_Code - GDT_Start
 DATA_SEGMENT        equ     GDT_Data - GDT_Start
 ;***********************************************************************

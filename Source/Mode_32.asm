@@ -1,44 +1,25 @@
 [bits 32]
-VIDEO_MEM       equ     0xb8000
-DEF_COLOR       equ     0x0f
-;=======================================================================
-Test32:
-    mov ax,0x10
-    mov ds,ax
-    mov ss,ax
-    mov es,ax
-    mov esp,90000h
-    cld
-    mov     ebx, MODE_MESSAGE
-    call    print_string32
-    cli
+[ORG 0x1000]
+Start_32:
+    pusha
+    mov     edx, VIDEO_MEMORY
+    xor     eax, eax
+    mov     ah, MAGENTA_ON_BLACK
+    mov     al, 'Y'
+    mov     [edx], ax
+    popa
 Idle:
     hlt
     jmp     Idle
 ;=======================================================================
 ;.......................................................................
-MODE_MESSAGE:       db "Mode: Protected Mode (32 Bits).", 0x0A, 0x0D, 0
 ;.......................................................................
+;-----------------------------------------------------------------------
+; Pad boot sector to 510 bytes and add 2 byte boot signature for
+; 512 total bytes
+;-----------------------------------------------------------------------
+TIMES       512-($-$$)  db  0
 ;***********************************************************************
-print_string32:
-    pusha
-    mov edx,VIDEO_MEM
-
-print_string32_loop:
-    mov al, [ebx]
-    mov ah, DEF_COLOR
-
-    cmp al,0
-    je print_string32_end
-
-    mov [edx],ax
-
-    inc ebx
-    add edx,2
-    jmp print_string32_loop
-
-print_string32_end:
-    popa
-    ret
+%include "Include/Golden_Gate_Intercontinental/Ports/Wired/Video_Graphics_Array/Default.asm"
 ;***********************************************************************
 ;//EOF
