@@ -48,6 +48,7 @@ Load.Mode.32:
 ;***********************************************************************
 %include "Include/Boot_Components/Display_String.asm"
 %include "Include/Boot_Components/Disk_Load.asm"
+%include "Include/BIOS/BIOS_CGA_16Colors.asm"
 ;***********************************************************************
 [bits 32]
 ;=======================================================================
@@ -63,7 +64,7 @@ Begin.Protected.Mode:
     mov     al, 'X'
     mov     [edx], ax
     popa
-    call    MODE_32_OFFSET
+    ;~ call    MODE_32_OFFSET
 Idle:
     hlt
     jmp     Idle

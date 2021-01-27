@@ -2,7 +2,7 @@
 ;=======================================================================
 ; Default Standard Video Graphics Array
 ;=======================================================================
-VIDEO_MEMORY                    equ     0xB8000
-MAGENTA_ON_BLACK                equ     0x0f
+VIDEO_MEMORY            equ     0xB8000
+MAGENTA_ON_BLACK        equ     BACKGROUND_BLACK+VERSATILE_LIGHT_MAGENTA
 ;***********************************************************************
 ;//EOF
