@@ -12,6 +12,11 @@ Initialize:
     mov     byte [__boot_device__], dl
 Start:
     call    Wait.A.Second
+    mov     si, Project.Title
+    call    System.AI.via.BIOS
+    mov     si, Project.Version
+    call    System.AI.via.BIOS
+    call    Wait.A.Second
     mov     si, TEST_MESSAGE
     call    System.AI.via.BIOS
     call    Wait.A.Second
@@ -51,9 +56,10 @@ Load.KiB.10:
 ;***********************************************************************
 ;.......................................................................
 TEST_MESSAGE:           db "Hi! :)", 0
-READ_DISK_MESSAGE_1:    db "Reading boot disk - Sector 2.", 0
+READ_DISK_MESSAGE_1:    db "Reading [Sector 2].", 0
 READ_DISK_MESSAGE_2:    db "Disk read successfull.", 0
 DISK_ERROR_MESSAGE:     db "Boot disk read error!", 0
+%include "Include/Golden_Gate_Intercontinental/Version.asm"
 ;.......................................................................
 ;***********************************************************************
 ;-----------------------------------------------------------------------
