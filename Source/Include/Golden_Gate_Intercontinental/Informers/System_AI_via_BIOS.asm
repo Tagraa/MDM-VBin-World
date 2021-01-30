@@ -1,8 +1,10 @@
 ;***********************************************************************
 ;=======================================================================
-; System AI Identity
+; Main System Informer - Artificial Intelligence (AI)
 ;=======================================================================
-__AI__:                 db  0x0A, 0x0D, "__AI__@System> "
-__AI__Length:           dw  $-__AI__
+System.AI.via.BIOS:
+    call    System.AI.Reporting.via.BIOS
+    call    Display.String.Teletype
+    ret
 ;***********************************************************************
 ;//EOF

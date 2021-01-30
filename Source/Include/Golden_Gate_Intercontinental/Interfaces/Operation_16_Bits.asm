@@ -1,290 +1,245 @@
+;  API_16.asm
+;
+;  Copyright 2021 Saurav Roy (TagRaa) <xp.saurav@yahoo.in>
+;
+;  This program is free software; you can redistribute it and/or modify
+;  it under the terms of the GNU General Public License as published by
+;  the Free Software Foundation; either version 2 of the License, or
+;  (at your option) any later version.
+;
+;  This program is distributed in the hope that it will be useful,
+;  but WITHOUT ANY WARRANTY; without even the implied warranty of
+;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;  GNU General Public License for more details.
+;
+;  You should have received a copy of the GNU General Public License
+;  along with this program; if not, write to the Free Software
+;  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+;  MA 02110-1301, USA.
+;
+;#######################################################################
+; Operation 16 Bits
+;#######################################################################
 ;***********************************************************************
-; Application Programming Interface (API)
+; Arithmetic Operations
 ;***********************************************************************
+
 ;=======================================================================
-; Single character
+; Decimal Addition
 ;=======================================================================
-Display.ASCII:
-    mov     ah, 0x0E
-    int     0x10
-    ret
 ;-----------------------------------------------------------------------
-Display.New.Line:
-    push    ax
-    mov     al, 10
-    call    Display.ASCII
-    mov     al, 13
-    call    Display.ASCII
-    pop     ax
-    ret
-;=======================================================================
-; Null Terminated String
-;=======================================================================
-Display.String:
-    push    ax
-    mov     ah, 0x0E
-    .Repeat:
-        lodsb
-        cmp     al, 0x00
-        je      .Return
-        int     0x10
-        jmp     .Repeat
-    .Return:
-    pop     ax
-    ret
-;=======================================================================
-; [Get, Set] System Variable >  __digit__ = Decimal.Digit
-;=======================================================================
-Decimal.Digit:      db  0
-    .Set:
-        cmp     byte [Decimal.Digit], 9
-        ja      .Error
-        push    cx
-        xor     cx, cx
-        mov     cl, byte [Decimal.Digit]
-        mov     byte [__digit__], cl
-        pop     cx
-        ret
-    .Get:
-        push    cx
-        xor     cx, cx
-        mov     cl, byte [__digit__]
-        mov     byte [Decimal.Digit], cl
-        pop     cx
-        ret
-    .Error:
-        mov     byte [__digit__], cl
-        mov     byte [__message_type__], 1     ; Message Type
-        mov     word [__message_code__], 0       ; Error Code
-        mov     word [__api_code__], 0         ; API16 Code
-        mov     word [__file_code__], 0        ; File Code
-        mov     word [__line_number__], 39     ; Line number
-        call    System.AI
-        mov     byte [Decimal.Digit], 0
-        call    .Set
-        ret
+; Addition between byte sized decimal values
 ;-----------------------------------------------------------------------
-Display.Decimal.Digit:
-    push    ax
-    xor     ax, ax
-    call    Decimal.Digit.Get
-    mov     al, byte [Decimal.Digit]
-    add     al, '0'
-    call    Display.ASCII
-    pop     ax
+Decimal.Byte.Plus:     db  0
     ret
-;=======================================================================
-; [Get, Set] System Variable >  __byte__ = Decimal.Byte
-;=======================================================================
-Decimal.Byte:      db  0
-    .Set:
-        push    cx
-        xor     cx, cx
-        mov     cl, byte [Decimal.Byte]
-        mov     byte [__byte__], cl
-        pop     cx
-        ret
-    .Get:
-        push    cx
-        xor     cx, cx
-        mov     cl, byte [__byte__]
-        mov     byte [Decimal.Byte], cl
-        pop     cx
-        ret
-;-----------------------------------------------------------------------
-Display.Decimal.Byte:
+    .Result:
         push    ax
-        push    cx
         xor     ax, ax
-        call    Decimal.Byte.Get
         mov     al, byte [Decimal.Byte]
-        xor     cx, cx
-        ; Detect Octal
-        cmp     bl, 8
-        je      .Process
-        ; Detect Hexadecimal
-        cmp     bl, 16
-        je      .Process
-        ; Otherwise Decimal
-        push    bx
-        xor     bx, bx
-        mov     bl, 10
-    .Process:
-        mov     ah, 0
-        div     bl
+        add     al, byte [Decimal.Byte.Plus]
+        mov     [__result__], al
+        pop     ax
+        ret
+;-----------------------------------------------------------------------
+; Addition between word sized decimal values
+;-----------------------------------------------------------------------
+Decimal.Word.Plus:     dw  0
+    ret
+    .Result:
         push    ax
-        inc     cl
-        test    al, al
-        jnz     .Process
-        ; Detect Hexadecimal
-        cmp     bl, 16
-        je      .Restore.Hexadecimal
-    .Restore:
-        dec     cl
-        pop     ax
-        mov     byte [Decimal.Digit], ah
-        call    Decimal.Digit.Set
-        call    Display.Decimal.Digit
-        test    cl, cl
-        jnz     .Restore
-        jmp     .Finish
-    .Restore.Hexadecimal:
-        dec     cl
-        pop     ax
-        cmp     ah, 9
-        ja      .Extended_part
-        mov     byte [Decimal.Digit], ah
-        call    Decimal.Digit.Set
-        call    Display.Decimal.Digit
-        jmp     .Avoid_Extended_Part
-    .Extended_part:
-        mov     al, ah
-        sub     al, 10
-        add     al, 'A'
-        call    Display.ASCII
-    .Avoid_Extended_Part:
-        test    cl, cl
-        jnz     .Restore.Hexadecimal
-        ; Detect Octal
-        cmp     bl, 8
-        je      Display.Decimal.Byte.Octal.Finish
-        ; Detect Hexadecimal
-        cmp     bx, 16
-        je      Display.Decimal.Byte.Hexadecimal.Finish
-        ; Otherwise finish here
-    .Finish:
-        pop     bx
-        pop     cx
-        pop     ax
-        ret
-;-----------------------------------------------------------------------
-Display.Decimal.Byte.Octal:
-        push    bx
-        xor     bx, bx
-        mov     bl, 8
-        jmp     Display.Decimal.Byte
-    .Finish:
-        pop     cx
-        pop     ax
-        pop     bx
-        ret
-;-----------------------------------------------------------------------
-Display.Decimal.Byte.Hexadecimal:
-        push    bx
-        xor     bx, bx
-        mov     bl, 16
-        jmp     Display.Decimal.Byte
-    .Finish:
-        pop     cx
-        pop     ax
-        pop     bx
-        ret
-;=======================================================================
-; [Get, Set] System Variable >  __word__ = Decimal.Word
-;=======================================================================
-Decimal.Word:   dw  0
-    .Set:
-        push    cx
-        mov     cx, word [Decimal.Word]
-        mov     word [__word__], cx
-        pop     cx
-        ret
-    .Get:
-        push    cx
-        mov     cx, word [__word__]
-        mov     word [Decimal.Word], cx
-        pop     cx
-        ret
-;-----------------------------------------------------------------------
-Display.Decimal.Word:
-        push    ax
-        push    cx
-        push    dx
-        call    Decimal.Word.Get
+        xor     ax, ax
         mov     ax, word [Decimal.Word]
-        xor     cx, cx
-        ; Detect Octal
-        cmp     bx, 8
-        je      .Process
-        ; Detect Hexadecimal
-        cmp     bx, 16
-        je      .Process
-        ; Otherwise Decimal
-        push    bx
-        mov     bx, 10
-    .Process:
-        mov     dx, 0
-        div     bx
+        add     ax, word [Decimal.Word.Plus]
+        mov     [__result__], ax
+        pop     ax
+        ret
+;=======================================================================
+; Decimal Subtraction
+;=======================================================================
+;-----------------------------------------------------------------------
+; Subtraction between byte sized decimal values
+;-----------------------------------------------------------------------
+Decimal.Byte.Minus:     db  0
+    ret
+    .Result:
+        push    ax
+        xor     ax, ax
+        mov     al, byte [Decimal.Byte]
+        sub     al, byte [Decimal.Byte.Minus]
+        mov     [__result__], al
+        pop     ax
+        ret
+;-----------------------------------------------------------------------
+; Subtraction between word sized decimal values
+;-----------------------------------------------------------------------
+Decimal.Word.Minus:     dw  0
+    ret
+    .Result:
+        push    ax
+        xor     ax, ax
+        mov     ax, word [Decimal.Word]
+        sub     ax, word [Decimal.Word.Minus]
+        mov     [__result__], ax
+        pop     ax
+        ret
+;=======================================================================
+; Decimal Multiplication
+;=======================================================================
+;-----------------------------------------------------------------------
+; Multiplication between byte sized decimal values
+;-----------------------------------------------------------------------
+Decimal.Byte.Multiply:     db  0
+    ret
+    .Result:
+        push    ax
+        xor     ax, ax
+        mov     al, byte [Decimal.Byte]
+        mul     byte [Decimal.Byte.Multiply]
+        mov     [__result__], ax
+        pop     ax
+        ret
+;-----------------------------------------------------------------------
+; Multiplication between word sized decimal values
+;-----------------------------------------------------------------------
+Decimal.Word.Multiply:     dw  0
+    ret
+    .Result:
+        push    ax
         push    dx
-        inc     cl
-        test    ax, ax
-        jnz     .Process
-        ; Detect Hexadecimal
-        cmp     bx, 16
-        je      .Restore.Hexadecimal
-    .Restore:
-        dec     cl
+        xor     ax, ax
+        xor     dx, dx
+        mov     ax, word [Decimal.Word]
+        mul     word [Decimal.Word.Multiply]
+        mov     [__result__], ax
+        mov     [__result__+2], dx
         pop     dx
-        mov     byte [Decimal.Digit], dl
-        call    Decimal.Digit.Set
-        call    Display.Decimal.Digit
-        test    cl, cl
-        jnz     .Restore
-        jmp     .Finish
-    .Restore.Hexadecimal:
-        dec     cl
-        pop     dx
-        cmp     dl, 9
-        ja      .Extended_part
-        mov     byte [Decimal.Digit], dl
-        call    Decimal.Digit.Set
-        call    Display.Decimal.Digit
-        jmp     .Avoid_Extended_Part
-    .Extended_part:
-        mov     al, dl
-        sub     al, 10
-        add     al, 'A'
-        call    Display.ASCII
-    .Avoid_Extended_Part:
-        test    cl, cl
-        jnz     .Restore.Hexadecimal
-        ; Detect Octal
-        cmp     bx, 8
-        je      Display.Decimal.Word.Octal.Finish
-        ; Detect Hexadecimal
-        cmp     bx, 16
-        je      Display.Decimal.Word.Hexadecimal.Finish
-        ; Otherwise finish here
-    .Finish:
-        pop     bx
-        pop     dx
-        pop     cx
+        pop     ax
+        ret
+;=======================================================================
+; Decimal Division
+;=======================================================================
+;-----------------------------------------------------------------------
+; Division between byte sized decimal values
+;-----------------------------------------------------------------------
+Decimal.Byte.Divide:     db  0
+    ret
+    .Result:
+        push    ax
+        xor     ax, ax
+        mov     al, byte [Decimal.Byte]
+        div     byte [Decimal.Byte.Divide]
+        mov     [__result__], ax
         pop     ax
         ret
 ;-----------------------------------------------------------------------
-Display.Decimal.Word.Octal:
-        push    bx
-        xor     bx, bx
-        mov     bx, 8
-        jmp     Display.Decimal.Word
-    .Finish:
-        pop     dx
-        pop     cx
-        pop     ax
-        pop     bx
-        ret
+; Division between word sized decimal values
 ;-----------------------------------------------------------------------
-Display.Decimal.Word.Hexadecimal:
-        push    bx
-        xor     bx, bx
-        mov     bx, 16
-        jmp     Display.Decimal.Word
-    .Finish:
+Decimal.Word.Divide:     dw  0
+    ret
+    .Result:
+        push    ax
+        push    dx
+        xor     dx, dx
+        mov     ax, word [Decimal.Word]
+        div     word [Decimal.Word.Divide]
+        mov     [__result__], ax
+        mov     [__result__+2], dx
         pop     dx
-        pop     cx
         pop     ax
-        pop     bx
         ret
+;=======================================================================
+; Display Multiplication or Division result between byte sized decimal
+; values, depends on type of operation
+;=======================================================================
+Display.Decimal.Byte.Result.Special:
+    push    word [Decimal.Word]
+    push    ax
+    mov     ax, word [__result__]
+    cmp     byte [.Zone], 0
+    ja      .Division
+    mov     word [Decimal.Word], ax
+    call    Display.Decimal.Word
+    .Done:
+        pop     ax
+        pop     word [Decimal.Word]
+        ret
+    .Zone:      db  0
+        ret
+    .Quotient:
+        mov     byte [.Zone], 1
+        jmp     Display.Decimal.Byte.Result.Special
+    .Division:
+        push    dx
+        xor     dx, dx
+        mov     dl, byte [Decimal.Byte]
+        cmp     byte [.Zone], 2
+        je      .Part2
+        mov     byte [Decimal.Byte], al
+        jmp     .Continue
+    .Part2:
+        mov     byte [Decimal.Byte], ah
+    .Continue:
+        call    Display.Decimal.Byte
+        mov     byte [Decimal.Byte], dl
+        pop     dx
+        jmp     .Done
+    .Remainder:
+        mov     byte [.Zone], 2
+        jmp     Display.Decimal.Byte.Result.Special
+;=======================================================================
+; Display Multiplication or Division result between word sized decimal
+; values, depends on type of operation
+;=======================================================================
+Display.Decimal.Word.Result.Special:
+    push    word [Decimal.Word]
+    push    ax
+    push    dx
+    cmp     byte [.Zone], 1
+    je      .Quotient_Part
+    cmp     byte [.Zone], 2
+    je      .Remainder_Part
+    .Quotient_Part:
+        mov     ax, [__result__]
+        mov     word [Decimal.Word], ax
+        jmp     .Done
+    .Remainder_Part:
+        mov     dx, [__result__+2]
+        mov     word [Decimal.Word], dx
+    .Done:
+        call    Display.Decimal.Word
+        pop     dx
+        pop     ax
+        pop     word [Decimal.Word]
+        ret
+    .Zone:      db  0
+        ret
+    .Quotient:
+        mov     byte [.Zone], 1
+        jmp     Display.Decimal.Word.Result.Special
+    .Remainder:
+        mov     byte [.Zone], 2
+        jmp     Display.Decimal.Word.Result.Special
+;***********************************************************************
+Display.Decimal.Word.Result.Special2:
+    push    ax
+    push    dx
+    xor     ax, ax
+    xor     dx, dx
+    mov     ax, [__result__]
+    mov     dx, [__result__+2]
+    cmp     dx, 0
+    je      .Softway
+    mov     word [Decimal.Word], dx
+    call    Display.Decimal.Word
+    .Softway:
+        mov     word [Decimal.Word], ax
+        call    Display.Decimal.Word
+    pop     dx
+    pop     ax
+    ret
+;***********************************************************************
+
+
 ;=======================================================================
 ; Function:     'Call    Display.Video.Mode.Change'
 ;
