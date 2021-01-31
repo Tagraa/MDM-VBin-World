@@ -19,9 +19,41 @@ BIOS_10h:
     .Set.Cursor.Position:
         mov     ah, 02h
         jmp     .Interrupt
+    .Set.Background.Or.Border.Color:
+        mov     ah, 0Bh
+        jmp     .Interrupt
+    .Toggle.Intensity.Or.Blinking:
+        mov     ax, 1003h
+        jmp     .Interrupt
+    .Set.Cursor.Shape:
+        mov     ah, 01h
+        jmp     .Interrupt
 ;***********************************************************************
 Display:
     ret
+;-----------------------------------------------------------------------
+    .Intensity:                          ; Enable intensive colors.
+        push    bx
+        xor     bx, bx
+        call    BIOS_10h.Toggle.Intensity.Or.Blinking
+        pop     bx
+        ret
+;-----------------------------------------------------------------------
+    .Blinking:                           ; Enable blinking
+        push    bx
+        xor     bx, bx
+        mov     bl, 1
+        call    BIOS_10h.Toggle.Intensity.Or.Blinking
+        pop     bx
+        ret
+;-----------------------------------------------------------------------
+    .Background.Color:
+        push    bx
+        xor     bx, bx
+        mov     bl, byte [__background_color__]
+        call    BIOS_10h.Set.Background.Or.Border.Color
+        pop     bx
+        ret
 ;-----------------------------------------------------------------------
     .String:
         push    ax
@@ -55,6 +87,17 @@ Display:
             pop     ax
             ret
 ;-----------------------------------------------------------------------
+Display.Cursor:
+    .Hide:
+        push    cx
+        mov     word [__cursor_shape__], 2607h
+        mov     cx, word [__cursor_shape__]
+        call    BIOS_10h.Set.Cursor.Shape
+        pop     cx
+        ret
+    .Show:
+        jmp     Display.Cursor.Shape.Normal
+;-----------------------------------------------------------------------
 Display.Cursor.Position:
     .Read:
         push    bx
@@ -82,13 +125,34 @@ Display.Cursor.Position:
         pop     bx
         ret
 ;-----------------------------------------------------------------------
-;.......................................................................
+Display.Cursor.Shape:
+    .Custom:
+        push    cx
+        mov     cx, word [__cursor_shape__]
+        call    BIOS_10h.Set.Cursor.Shape
+        pop     cx
+        ret
+    .FullBlock:
+        push    cx
+        mov     word [__cursor_shape__], 0007h
+        mov     cx, word [__cursor_shape__]
+        call    BIOS_10h.Set.Cursor.Shape
+        pop     cx
+        ret
+    .Normal:
+        push    cx
+        mov     word [__cursor_shape__], 0607h
+        mov     cx, word [__cursor_shape__]
+        call    BIOS_10h.Set.Cursor.Shape
+        pop     cx
+        ret
+;***********************************************************************
 __active_page__:            db 0
 __ascii_color__:            db 0
+__background_color__:       db 0
 __count__:                  dw 0
 __current_row__:            db 0
 __current_column__:         db 0
 __cursor_shape__:           dw 0607h
-;.......................................................................
 ;***********************************************************************
 ;//EOF
