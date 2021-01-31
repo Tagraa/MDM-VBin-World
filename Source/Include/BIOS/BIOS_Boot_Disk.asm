@@ -10,6 +10,13 @@ BIOS_13h:
     .Sectors.Read:
         mov     ah, 02h
         jmp     .Interrupt
+        ret
+    .Sectors.Extended.Read:
+        mov     ah, 42h
+        jmp     .Interrupt
+    .Sectors.Extended.Write:
+        mov     ah, 43h
+        jmp     .Interrupt
 ;***********************************************************************
 Disk:
         ret

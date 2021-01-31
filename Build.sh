@@ -29,11 +29,11 @@ cd $SOURCE_DIR
 echo "$prompt Current Directory = $PWD"
 echo "$prompt Compilling Core..."
 #.......................................................................
-echo "$prompt File: Sector_512_000B00T.asm"
-nasm -f bin Sector_512_000B00T.asm -o "$OUTPUT_DIR/Sector_512_000B00T.vbin" -l "$OUTPUT_DIR/Sector_512_000B00T.lst"
+echo "$prompt File: Golden_Gate_Intercontinental.asm"
+nasm -f bin Golden_Gate_Intercontinental.asm -o "$OUTPUT_DIR/Golden_Gate_Intercontinental.vbin" -l "$OUTPUT_DIR/Golden_Gate_Intercontinental.lst"
 #.......................................................................
-echo "$prompt File: Sector_512_0000002.asm"
-nasm -f bin Sector_512_0000002.asm -o "$OUTPUT_DIR/Sector_512_0000002.vbin" -l "$OUTPUT_DIR/Sector_512_0000002.lst"
+echo "$prompt File: Ghost_Floppy_Disk.asm"
+nasm -f bin Ghost_Floppy_Disk.asm -o "$OUTPUT_DIR/Ghost_Floppy_Disk.vbin" -l "$OUTPUT_DIR/Ghost_Floppy_Disk.lst"
 #.......................................................................
 echo "$prompt Disk: Disk.img"
 nasm -f bin Disk.asm -o "$OUTPUT_DIR/Disk.img"

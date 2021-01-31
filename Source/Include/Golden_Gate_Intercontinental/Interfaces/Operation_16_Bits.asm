@@ -300,61 +300,6 @@ Display.Video.Mode.Reset:
     pop     ax
     ret
 ;=======================================================================
-; Function:     'call   Display.Background.Color'
-;
-; Parameters:
-;       __background_color__ = Background/Border color
-;                              (Border only in text modes)
-;
-; Return:       Not applicable.
-;
-;=======================================================================
-Display.Background.Color:
-    push    bx
-    mov     bl, byte [__background_color__]
-    call    BIOS_10h.Set.Background.Or.Border.Color
-    pop     bx
-    ret
-;=======================================================================
-; Function:     'call   Display.Cursor.Shape.Custom'
-;
-; Parameters:
-;       __cursor_shape__ = value from 0007h to 0607h
-;
-; Return:       Not applicable.
-;
-;=======================================================================
-Display.Cursor.Shape.Custom:
-    push    cx
-    mov     cx, word [__cursor_shape__]
-    call    BIOS_10h.Set.Cursor.Shape
-    pop     cx
-    ret
-;-----------------------------------------------------------------------
-Display.Cursor.Shape.FullBlock:
-    push    cx
-    mov     word [__cursor_shape__], 0007h
-    mov     cx, word [__cursor_shape__]
-    call    BIOS_10h.Set.Cursor.Shape
-    pop     cx
-    ret
-;-----------------------------------------------------------------------
-Display.Cursor.Shape.Normal:
-    push    cx
-    mov     word [__cursor_shape__], 0607h
-    mov     cx, word [__cursor_shape__]
-    call    BIOS_10h.Set.Cursor.Shape
-    pop     cx
-    ret
-;-----------------------------------------------------------------------
-Display.Cursor.Hide:
-    push    cx
-    mov     word [__cursor_shape__], 2607h
-    mov     cx, word [__cursor_shape__]
-    call    BIOS_10h.Set.Cursor.Shape
-    pop     cx
-    ret
-;=======================================================================
 ; Function:     'call   Display.Cursor.Position.Move'
 ;
 ; Parameters:
@@ -616,19 +561,6 @@ Display.Write.String:          ; (EGA+, meaning PC AT minimum)
     pop     cx
     pop     bx
     pop     ax
-    ret
-;=======================================================================
-; Function:     'call   Display.Intensity'
-;
-; Parameters:   Not applicable.
-;
-; Return:       Not applicable.
-;
-;=======================================================================
-Display.Intensity:                          ; Enable intensive colors.
-    mov     bl, 0
-    mov     bh, 0
-    call    BIOS_10h.Toggle.Intensity.Or.Blinking
     ret
 ;=======================================================================
 ; Function:     'call   Display.Blinking'
