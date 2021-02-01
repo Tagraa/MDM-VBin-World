@@ -11,25 +11,27 @@ BIOS_15h:
         mov     ah, 86h
         jmp     .Interrupt
 ;***********************************************************************
-Wait.A.Second:
-        mov     word [__Wait__], 15
-        call    Process.Wait
-        ret
 Process:
         ret
-    .Wait:
+    .Wait.A.Second:
         push    ax
         push    cx
         push    dx
-        mov     cx, word [__Wait__]
-        mov     dx, 8480h
+        mov     cx, 0Fh         ; --|
+        mov     dx, 4240h       ; --|-> 1000000
         call    BIOS_15h.Wait
         pop     dx
         pop     cx
         pop     ax
         ret
+    .Wait.For.Seconds:
+        call    Process.Wait.A.Second
+        dec     word [__wait_seconds__]
+        cmp     word [__wait_seconds__], 0
+        jne     .Wait.For.Seconds
+        ret
 ;.......................................................................
-__Wait__:            dw 15
+__wait_seconds__:       dw 1
 ;.......................................................................
 ;***********************************************************************
 ;//EOF

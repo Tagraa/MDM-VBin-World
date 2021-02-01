@@ -1,10 +1,15 @@
+;***********************************************************************
+; Golden Gate of the VBin World
+;***********************************************************************
+HEADQUARTER_16                  equ     0x7e00
+;=======================================================================
 [bits 16]
-[org    0x7e00]
+[org HEADQUARTER_16]
 Golden.Gateway:
     xor     ax, ax
     mov     ds, ax
     mov     ss, ax
-    mov     sp, 0x7e00
+    mov     sp, HEADQUARTER_16
 ;.......................................................................
     mov     byte [__background_color__], VERSATILE_LIGHT_RED
     call    Display.Intensity
@@ -13,15 +18,17 @@ Golden.Gateway:
 ;.......................................................................
     cld
     xor     cx, cx
-;***********************************************************************
-VBin.Stage2:
-    call    VBin.Stage2.Render
+;=======================================================================
+VBin.Operation.Bits.16:
+    call    VBin.Offset.Welcome
 ;.......................................................................
 Idle:
     hlt
     jmp     Idle
-;***********************************************************************
-VBin.Stage2.Render:
+;=======================================================================
+VBin.Offset.Welcome:
+    mov     word [__wait_seconds__], 2
+    call    Process.Wait.For.Seconds
     mov     si, MessageWelcome
     call    System.AI.via.BIOS
     mov     si, Project.Title
@@ -32,6 +39,7 @@ VBin.Stage2.Render:
 ;***********************************************************************
 %include "Include/BIOS/BIOS_Display.asm"
 %include "Include/BIOS/BIOS_CGA_16Colors.asm"
+%include "Include/BIOS/BIOS_Process_Wait.asm"
 %include "Include/Golden_Gate_Intercontinental/Informers/System_AI_via_BIOS.asm"
 %include "Include/Golden_Gate_Intercontinental/Informers/System_AI_Reporting_via_BIOS.asm"
 %include "Include/Golden_Gate_Intercontinental/Informers/System_AI_Core/System_AI_Identity_Card.asm"
