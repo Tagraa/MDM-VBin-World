@@ -8,7 +8,7 @@ HEADQUARTER_16                  equ     0x7e00
 ;***********************************************************************
 %include "Include/BIOS/BIOS_Display.asm"
 %include "Include/BIOS/BIOS_CGA_16Colors.asm"
-%include "Include/BIOS/BIOS_Process_Wait.asm"
+%include "Include/BIOS/BIOS_System.asm"
 %include "Include/Golden_Gate_Intercontinental/Informers/System_AI_via_BIOS.asm"
 %include "Include/Golden_Gate_Intercontinental/Informers/System_AI_Reporting_via_BIOS.asm"
 %include "Include/Golden_Gate_Intercontinental/Informers/System_AI_Core/System_AI_Identity_Card.asm"
@@ -30,16 +30,19 @@ Golden.Gateway:
     xor     cx, cx
 ;=======================================================================
 VBin.Operation.Bits.16:
-    call    VBin.Offset.Welcome
-    call    VBin.Offset.Hardwares.Check
+    call    VBin.Function.Welcome
+    call    VBin.Function.Hardwares.Check
 ;.......................................................................
 Idle:
     hlt
+    mov     word [__wait_seconds__], 5
+    call    System.Process.Wait.For.Seconds
+    call    System.Turn.Off
     jmp     Idle
 ;=======================================================================
-VBin.Offset.Welcome:
+VBin.Function.Welcome:
     mov     word [__wait_seconds__], 2
-    call    Process.Wait.For.Seconds
+    call    System.Process.Wait.For.Seconds
     mov     si, MessageWelcome
     call    System.AI.via.BIOS
     mov     si, Project.Title
@@ -47,9 +50,9 @@ VBin.Offset.Welcome:
     mov     si, Project.Version
     call    System.AI.via.BIOS
     ret
-VBin.Offset.Hardwares.Check:
+VBin.Function.Hardwares.Check:
     mov     word [__wait_seconds__], 4
-    call    Process.Wait.For.Seconds
+    call    System.Process.Wait.For.Seconds
     mov     si, MessageCheckHardwares
     call    System.AI.via.BIOS
     ret

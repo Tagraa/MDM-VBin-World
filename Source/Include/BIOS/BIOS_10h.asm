@@ -17,60 +17,6 @@ BIOS_10h:
                 mov     ah, 00h
                 jmp     .Interrupt
 ;=======================================================================
-; Function:     AH=01h
-;
-; Parameters:
-;       CH = Scan Row Start
-;       CL = Scan Row End
-;
-;       Normally a character cell has 8 scan lines, 0-7. So, CX=0607h is
-;       a normal underline cursor, CX=0007h is a full-block cursor. If
-;       bit 5 of CH is set, that often means "Hide cursor". So CX=2607h
-;       is an invisible cursor.
-;
-;       Some video cards have 16 scan lines, 00h-0Fh.
-;
-;       Some video cards don't use bit 5 of CH. With these, make
-;       Start>End (e.g. CX=0706h)
-;
-; Return:       Not applicable.
-;
-;=======================================================================
-        .Set.Cursor.Shape:
-                mov     ah, 01h
-                jmp     .Interrupt
-;=======================================================================
-; Function:     AH=02h
-;
-; Parameters:
-;       BH = Page Number
-;       DH = Row
-;       DL = Column
-;
-; Return:       Not applicable.
-;
-;=======================================================================
-        .Set.Cursor.Position:
-                mov     ah, 02h
-                jmp     .Interrupt
-;=======================================================================
-; Function:     AH=03h
-;
-; Parameters:
-;       BH = Page Number
-;
-; Return:
-;       AX = 0
-;       CH = Start scan line
-;       CL = End scan line
-;       DH = Row
-;       DL = Column
-;
-;=======================================================================
-        .Get.Cursor.Position.And.Shape:
-                mov     ah, 03h
-                jmp     .Interrupt
-;=======================================================================
 ; Function:     AH=04h          (Does not work on VGA systems)
 ;
 ; Parameters:   Not applicable.
@@ -165,19 +111,6 @@ BIOS_10h:
                 jmp     .Interrupt
 ;=======================================================================
 ; Function:     AH=0Bh
-;               BH=00h
-; Parameters:
-;       BL = Background/Border color (Border only in text modes)
-;
-; Return:       Not applicable.
-;
-;=======================================================================
-        .Set.Background.Or.Border.Color:
-                mov     ah, 0Bh
-                mov     bh, 00h
-                jmp     .Interrupt
-;=======================================================================
-; Function:     AH=0Bh
 ;               BH=01h
 ;
 ; Parameters:
@@ -220,20 +153,6 @@ BIOS_10h:
 ;=======================================================================
         .Read.Graphics.Pixel:
                 mov     ah, 0Dh
-                jmp     .Interrupt
-;=======================================================================
-; Function:     AH=0Eh
-;
-; Parameters:
-;       AL = Character
-;       BH = Page Number
-;       BL = Color (only in graphic mode)
-;
-; Return:       Not applicable.
-;
-;=======================================================================
-        .Teletype.Output:
-                mov     ah, 0Eh
                 jmp     .Interrupt
 ;=======================================================================
 ; Function:     AH=0Fh
@@ -290,24 +209,6 @@ BIOS_10h:
                 mov     ah, 12h
                 jmp     .Interrupt
 ;=======================================================================
-; Function:     AH=13h
-;
-; Parameters:
-;       AL = Write mode: 1 - character only and cursor moved.
-;       BH = Page Number
-;       BL = Color
-;       CX = Number of characters in string
-;       DH = Row
-;       DL = Column
-;       ES:BP = Offset of string
-;
-; Return:       Not applicable.
-;
-;=======================================================================
-        .Write.String:          ; (EGA+, meaning PC AT minimum)
-                mov     ah, 13h
-                jmp     .Interrupt
-;=======================================================================
 ; Resource: https://en.wikipedia.org/wiki/BIOS_interrupt_call
 ;
 ; Function:     AH=1Ah  ; Get or Set Display Combination Code (VGA, SVGA)
@@ -358,24 +259,6 @@ BIOS_10h:
 ;=======================================================================
         .VESA.BIOS.Extension.Functions:
                 mov     ah, 4Fh
-                jmp     .Interrupt
-;=======================================================================
-; Resource: http://www.ablmcc.edu.hk/~scy/CIT/8086_bios_and_dos_interrupts.htm#int10h_1003h
-;
-; Function:     AX=1003h    ; toggle intensity/blinking
-;
-; Parameters:
-;       BL = write mode:
-;            0: enable intensive colors.
-;            1: enable blinking (not supported by the emulator and
-;                                windows command prompt).
-;       BH = 0 (to avoid problems on some adapters).
-;
-; Return:       Not applicable.
-;
-;=======================================================================
-        .Toggle.Intensity.Or.Blinking:
-                mov     ax, 1003h
                 jmp     .Interrupt
 ;=======================================================================
 ; Function:     AX=4F02h
