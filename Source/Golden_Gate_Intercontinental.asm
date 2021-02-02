@@ -37,6 +37,10 @@ Idle:
     hlt
     mov     word [__wait_seconds__], 5
     call    System.Process.Wait.For.Seconds
+    mov     si, MessageTurnOff
+    call    System.AI.via.BIOS
+    mov     word [__wait_seconds__], 2
+    call    System.Process.Wait.For.Seconds
     call    System.Turn.Off
     jmp     Idle
 ;=======================================================================
@@ -60,6 +64,7 @@ VBin.Function.Hardwares.Check:
 ;.......................................................................
 MessageWelcome:                   db "Welcome to", 0
 MessageCheckHardwares:            db "Now ... Checking hardwares ;)", 0
+MessageTurnOff:                   db "I am going to sleep. BBFN", 0
 ;.......................................................................
 ;***********************************************************************
 ;//EOF
