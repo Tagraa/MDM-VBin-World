@@ -2,9 +2,19 @@
 ; Golden Gate of the VBin World
 ;***********************************************************************
 HEADQUARTER_16                  equ     0x7e00
-;=======================================================================
+                                jmp     Golden.Gateway
 [bits 16]
 [org HEADQUARTER_16]
+;***********************************************************************
+%include "Include/BIOS/BIOS_Display.asm"
+%include "Include/BIOS/BIOS_CGA_16Colors.asm"
+%include "Include/BIOS/BIOS_Process_Wait.asm"
+%include "Include/Golden_Gate_Intercontinental/Informers/System_AI_via_BIOS.asm"
+%include "Include/Golden_Gate_Intercontinental/Informers/System_AI_Reporting_via_BIOS.asm"
+%include "Include/Golden_Gate_Intercontinental/Informers/System_AI_Core/System_AI_Identity_Card.asm"
+%include "Include/Golden_Gate_Intercontinental/Version.asm"
+;***********************************************************************
+;=======================================================================
 Golden.Gateway:
     xor     ax, ax
     mov     ds, ax
@@ -21,6 +31,7 @@ Golden.Gateway:
 ;=======================================================================
 VBin.Operation.Bits.16:
     call    VBin.Offset.Welcome
+    call    VBin.Offset.Hardwares.Check
 ;.......................................................................
 Idle:
     hlt
@@ -36,17 +47,16 @@ VBin.Offset.Welcome:
     mov     si, Project.Version
     call    System.AI.via.BIOS
     ret
-;***********************************************************************
-%include "Include/BIOS/BIOS_Display.asm"
-%include "Include/BIOS/BIOS_CGA_16Colors.asm"
-%include "Include/BIOS/BIOS_Process_Wait.asm"
-%include "Include/Golden_Gate_Intercontinental/Informers/System_AI_via_BIOS.asm"
-%include "Include/Golden_Gate_Intercontinental/Informers/System_AI_Reporting_via_BIOS.asm"
-%include "Include/Golden_Gate_Intercontinental/Informers/System_AI_Core/System_AI_Identity_Card.asm"
-%include "Include/Golden_Gate_Intercontinental/Version.asm"
+VBin.Offset.Hardwares.Check:
+    mov     word [__wait_seconds__], 4
+    call    Process.Wait.For.Seconds
+    mov     si, MessageCheckHardwares
+    call    System.AI.via.BIOS
+    ret
 ;***********************************************************************
 ;.......................................................................
-MessageWelcome:            db "Welcome to", 0
+MessageWelcome:                   db "Welcome to", 0
+MessageCheckHardwares:            db "Now ... Checking hardwares ;)", 0
 ;.......................................................................
 ;***********************************************************************
 ;//EOF
