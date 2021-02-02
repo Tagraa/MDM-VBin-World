@@ -8,6 +8,7 @@ HEADQUARTER_16                  equ     0x7e00
 ;***********************************************************************
 %include "Include/BIOS/BIOS_Display.asm"
 %include "Include/BIOS/BIOS_CGA_16Colors.asm"
+%include "Include/BIOS/BIOS_Keyboard.asm"
 %include "Include/BIOS/BIOS_System.asm"
 %include "Include/Golden_Gate_Intercontinental/Informers/System_AI_via_BIOS.asm"
 %include "Include/Golden_Gate_Intercontinental/Informers/System_AI_Reporting_via_BIOS.asm"
@@ -35,9 +36,12 @@ VBin.Operation.Bits.16:
 ;.......................................................................
 Idle:
     hlt
-    mov     word [__wait_seconds__], 5
+    mov     word [__wait_seconds__], 4
     call    System.Process.Wait.For.Seconds
-    mov     si, MessageTurnOff
+    mov     si, MessageTurnOff1
+    call    System.AI.via.BIOS
+    call    Keyboard.Wait.For.PageDown
+    mov     si, MessageTurnOff2
     call    System.AI.via.BIOS
     mov     word [__wait_seconds__], 2
     call    System.Process.Wait.For.Seconds
@@ -64,7 +68,8 @@ VBin.Function.Hardwares.Check:
 ;.......................................................................
 MessageWelcome:                   db "Welcome to", 0
 MessageCheckHardwares:            db "Now ... Checking hardwares ;)", 0
-MessageTurnOff:                   db "I am going to sleep. BBFN", 0
+MessageTurnOff1:                  db "Press key: <Page Down>, to turn off the computer.", 0
+MessageTurnOff2:                  db "I am going to sleep. BBFN", 0
 ;.......................................................................
 ;***********************************************************************
 ;//EOF
