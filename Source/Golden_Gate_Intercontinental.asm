@@ -38,10 +38,10 @@ Idle:
     hlt
     mov     word [__wait_seconds__], 4
     call    System.Process.Wait.For.Seconds
-    mov     si, MessageTurnOff1
+    mov     si, MessagePressKeyPageDown
     call    System.AI.via.BIOS
     call    Keyboard.Wait.For.PageDown
-    mov     si, MessageTurnOff2
+    mov     si, MessageTurnOff
     call    System.AI.via.BIOS
     mov     word [__wait_seconds__], 2
     call    System.Process.Wait.For.Seconds
@@ -66,10 +66,10 @@ VBin.Function.Hardwares.Check:
     ret
 ;***********************************************************************
 ;.......................................................................
-MessageWelcome:                   db "Welcome to", 0
-MessageCheckHardwares:            db "Now ... Checking hardwares ;)", 0
-MessageTurnOff1:                  db "Press key: <Page Down>, to turn off the computer.", 0
-MessageTurnOff2:                  db "I am going to sleep. BBFN", 0
+MessageWelcome:             db "Welcome to", 0
+MessageCheckHardwares:      db "Now ... Checking hardwares ;)", 0
+MessagePressKeyPageDown:    db "Press key: <Page Down>, to continue.", 0
+MessageTurnOff:             db "I am going to sleep. BBFN", 0
 ;.......................................................................
 ;***********************************************************************
 ;//EOF
